@@ -7,9 +7,11 @@ class Caesar
   def encrypt(key)
     new_string = ""
     upcase = false
-    @string.each_char do |char|
 
-      if char.sum < 64 || char.sum > 122
+    @string.each_char do |char|
+      ascii_value = char.sum
+
+      if ascii_value < 64 || ascii_value > 122
         new_string += char
         next
       end
@@ -24,16 +26,14 @@ class Caesar
         upper_bound = 122
       end
 
-      ascii_value = char.sum
+      encrypted_ascii_value = ascii_value + key
 
-      sum = ascii_value + key
-
-      if sum > upper_bound
-        if (lower_bound + (sum - upper_bound)) > upper_bound
-          value = (lower_bound + (sum - upper_bound))
-          new_string += get_encrypted_value_for(lower_bound, upper_bound, value)
+      if encrypted_ascii_value > upper_bound
+        if (lower_bound + (encrypted_ascii_value - upper_bound)) > upper_bound
+          encrypted_ascii_value = (lower_bound + (encrypted_ascii_value - upper_bound))
+          new_string += get_encrypted_value_for(lower_bound, upper_bound, encrypted_ascii_value)
         else
-          new_string += (lower_bound + (sum - upper_bound)).chr
+          new_string += (lower_bound + (encrypted_ascii_value - upper_bound)).chr
         end
       else
         new_string += (char.sum + key).chr
@@ -45,12 +45,12 @@ class Caesar
 
   private
 
-  def get_encrypted_value_for(lower_bound, upper_bound, value)
-    remainder = (value - upper_bound)
-    if (lower_bound + remainder) > upper_bound
-      get_encrypted_value_for(lower_bound, upper_bound, remainder + lower_bound)
+  def get_encrypted_value_for(lower_bound, upper_bound, encrypted_ascii_value)
+    encrypted_ascii_value = (encrypted_ascii_value - upper_bound)
+    if (lower_bound + encrypted_ascii_value) > upper_bound
+      get_encrypted_value_for(lower_bound, upper_bound, encrypted_ascii_value + lower_bound)
     else
-      char = (lower_bound + remainder).chr
+      char = (lower_bound + encrypted_ascii_value).chr
       char
     end
   end
