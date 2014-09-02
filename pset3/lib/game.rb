@@ -26,7 +26,6 @@ class Game
     row_containing_number = find_array_with_number(number)
     row_containing_number = board[row_containing_number]
 
-    row_containing_open_space = row_with_open_space
     row_containing_open_space = board[row_with_open_space]
     number_index = row_containing_number.index(number)
     open_number_index = row_containing_open_space.index("X")
@@ -55,10 +54,6 @@ class Game
     index_of_row_with_number = find_array_with_number(number)
     row_with_number = board[index_of_row_with_number]
     number_index = row_with_number.index(number)
-
-    index_of_row_with_open_number = find_array_with_number("X")
-    row_with_open_space = board[index_of_row_with_open_number]
-    open_number_index = row_with_open_space.index("X")
 
     case true
       when index_of_row_with_number == 0 && direction == "up"
