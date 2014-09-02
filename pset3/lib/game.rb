@@ -12,7 +12,17 @@ class Game
 
   def move(number, direction)
     is_move_legal?(number, direction)
+    make_move(direction, number)
+    print_board
+  end
 
+  def print_board
+    @board.each do |row|
+      p row
+    end
+  end
+
+  def make_move(direction, number)
     row_containing_number = find_array_with_number(number)
     row_containing_number = board[row_containing_number]
 
@@ -27,10 +37,6 @@ class Game
     else
       row_containing_number[number_index] = "X"
       row_containing_open_space[open_number_index] = number
-    end
-
-    @board.each do |row|
-      p row
     end
   end
 
