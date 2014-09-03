@@ -16,6 +16,8 @@ class Game
     print_board
   end
 
+  private
+
   def print_board
     @board.each do |row|
       p row
@@ -39,8 +41,6 @@ class Game
     end
   end
 
-
-  private
 
   def find_array_with_number(number)
     @board.each_with_index do |row, i|
