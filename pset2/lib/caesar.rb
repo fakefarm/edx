@@ -1,57 +1,74 @@
 class Caesar
 
-  def initialize(string)
-    @string = string
+  attr_reader :phrase, :ordinal_phrase
+
+  def initialize phrase
+    @phrase = prepare phrase
   end
 
-  def encrypt(key)
-    new_string = ""
-    upcase = false
+  def encrypt key
+    encrypt_phrase key
+  end
 
-    @string.each_char do |char|
-      ascii_value = char.sum
+private
 
-      if ascii_value < 64 || ascii_value > 122
-        new_string += char
-        next
-      end
+  def encrypt_phrase key
+    convert_phrase_to_ordinal
+    convert_ordinal_to_secret key
+  end
 
-      upcase = false unless char.upcase == char
+  def convert_phrase_to_ordinal
+    @ordinal_phrase ||= phrase.map { |letter| letter.ord }
+  end
 
-      if upcase
-        lower_bound = 64
-        upper_bound = 90
+  def convert_ordinal_to_secret key
+    code = ordinal_phrase.map do |letter|
+      if is_uppercase? letter
+        encrypt_uppercase letter, key
+      elsif is_lowercase? letter
+        encrypt_lowercase letter, key
       else
-        lower_bound = 96
-        upper_bound = 122
+        approved_as_is letter
       end
-
-      encrypted_ascii_value = ascii_value + key
-
-      if encrypted_ascii_value > upper_bound
-        if (lower_bound + (encrypted_ascii_value - upper_bound)) > upper_bound
-          encrypted_ascii_value = (lower_bound + (encrypted_ascii_value - upper_bound))
-          new_string += get_encrypted_value_for(lower_bound, upper_bound, encrypted_ascii_value)
-        else
-          new_string += (lower_bound + (encrypted_ascii_value - upper_bound)).chr
-        end
-      else
-        new_string += (char.sum + key).chr
-      end
-
     end
-    new_string
+    code.join('')
   end
 
-  private
+  def prepare phrase
+    phrase.split('')
+  end
 
-  def get_encrypted_value_for(lower_bound, upper_bound, encrypted_ascii_value)
-    encrypted_ascii_value = (encrypted_ascii_value - upper_bound)
-    if (lower_bound + encrypted_ascii_value) > upper_bound
-      get_encrypted_value_for(lower_bound, upper_bound, encrypted_ascii_value + lower_bound)
+  def is_uppercase? letter
+    (65..90).include? letter
+  end
+
+  def is_lowercase? letter
+    (97..122).include? letter
+  end
+
+  def approved_as_is letter
+    letter.chr
+  end
+
+  def encrypt_uppercase letter, key
+    total = letter + key
+    if total > 90
+      key = (total - 90) % 26
+      total = 65 + key
+      total.chr
     else
-      char = (lower_bound + encrypted_ascii_value).chr
-      char
+      total.chr
+    end
+  end
+
+  def encrypt_lowercase letter, key
+    total = letter + key
+    if total > 122
+      new_key = (total - 122) % 26
+      total = 96 + new_key
+      total.chr
+    else
+      total.chr
     end
   end
 end
